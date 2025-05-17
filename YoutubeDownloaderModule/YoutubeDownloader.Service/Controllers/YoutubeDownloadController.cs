@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.IO.Compression;
 using YoutubeDLSharp;
 using YoutubeDLSharp.Metadata;
 using YoutubeDLSharp.Options;
+using YoutubeDownloader.Service.exceptions;
 
 namespace YoutubeDownloader.Controllers
 {
@@ -11,7 +12,8 @@ namespace YoutubeDownloader.Controllers
     public class YoutubeDownloadController: ControllerBase
     {
         private readonly YoutubeDL ytdl;
-        public YoutubeDownloadController() {
+        public YoutubeDownloadController()
+        {
             ytdl = new YoutubeDL();
             string baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\.."));
 
@@ -22,10 +24,13 @@ namespace YoutubeDownloader.Controllers
 
         [HttpGet]
         [Route("downloadVideo/{videoUrl}")]
-        public async Task<IActionResult> GetVideos(string videoUrl)
+        public async Task<IActionResult> GetVideo(string videoUrl)
         {
             try
             {
+                var defaultYoutubePath = ytdl.OutputFolder;
+                ytdl.OutputFolder = Path.Combine(ytdl.OutputFolder, DateTime.Now.ToString("yyyyMMddHHmmss"));
+                Directory.CreateDirectory(ytdl.OutputFolder);
                 var options = new OptionSet()
                 {
                     RestrictFilenames = true
@@ -34,16 +39,21 @@ namespace YoutubeDownloader.Controllers
 
                 if(videoFile.ErrorOutput.Any(error => error.Contains("error", StringComparison.OrdinalIgnoreCase)))
                 {
-                    throw new UriFormatException(string.Join(", ", videoFile.ErrorOutput));
+                    throw new UrlProcessingException(string.Join(", ", videoFile.ErrorOutput));
                 }
 
                 var fileName = Path.GetFileName(videoFile.Data);
                 var fileBytes = System.IO.File.ReadAllBytes(videoFile.Data);
-                System.IO.File.Delete(videoFile.Data);
-                return Ok(File(fileBytes, "application/octet-stream", fileName));
+                if (Directory.Exists(ytdl.OutputFolder))
+                {
+                    Directory.Delete(ytdl.OutputFolder, recursive: true);
+                }
+                ytdl.OutputFolder = defaultYoutubePath;
+                return File(fileBytes, "application/octet-stream", fileName);
             }
-            catch (Exception ex) { 
-                return BadRequest( new
+            catch (Exception ex)
+            {
+                return BadRequest(new
                 {
                     error = ex.Message,
                     stackTrace = ex.StackTrace
@@ -57,6 +67,9 @@ namespace YoutubeDownloader.Controllers
         {
             try
             {
+                var defaultYoutubePath = ytdl.OutputFolder;
+                ytdl.OutputFolder = Path.Combine(ytdl.OutputFolder, DateTime.Now.ToString("yyyyMMddHHmmss"));
+                Directory.CreateDirectory(ytdl.OutputFolder);
                 List<string> downloadFilePaths = new List<string>();
                 var options = new OptionSet()
                 {
@@ -65,9 +78,9 @@ namespace YoutubeDownloader.Controllers
                 IEnumerable<Task> downloadTask = videoUrls.Select(async videoUrl =>
                 {
                     RunResult<string> videoFile = await ytdl.RunVideoDownload(Uri.UnescapeDataString(videoUrl), overrideOptions: options);
-                    if (videoFile.ErrorOutput.Length > 0)
+                    if (videoFile.ErrorOutput.Any(error => error.Contains("error", StringComparison.OrdinalIgnoreCase)))
                     {
-                        throw new UriFormatException(string.Join(", ", videoFile.ErrorOutput));
+                        throw new UrlProcessingException(string.Join(", ", videoFile.ErrorOutput));
                     }
                     downloadFilePaths.Add(videoFile.Data);
                 });
@@ -84,14 +97,12 @@ namespace YoutubeDownloader.Controllers
 
                 var zipBytes = System.IO.File.ReadAllBytes(zipPath);
 
-                foreach (var filePath in downloadFilePaths)
+                if (Directory.Exists(ytdl.OutputFolder))
                 {
-                    System.IO.File.Delete(filePath);
+                    Directory.Delete(ytdl.OutputFolder, recursive: true);
                 }
-
-                System.IO.File.Delete(zipPath);
-
-                return Ok(File(zipBytes, "application/zip", zipFileName));
+                ytdl.YoutubeDLPath = defaultYoutubePath;
+                return File(zipBytes, "application/zip", zipFileName);
             }
             catch (Exception ex)
             {
@@ -115,7 +126,7 @@ namespace YoutubeDownloader.Controllers
                     throw new UriFormatException(string.Join(", ", videoDetails.ErrorOutput));
                 }
                 return Ok(videoDetails.Data);
-            } 
+            }
             catch (Exception ex)
             {
                 return BadRequest(new
