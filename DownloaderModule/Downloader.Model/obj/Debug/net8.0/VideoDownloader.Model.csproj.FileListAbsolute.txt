@@ -1,0 +1,13 @@
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.AssemblyInfoInputs.cache
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.AssemblyInfo.cs
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.csproj.CoreCompileInputs.cache
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.sourcelink.json
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\bin\Debug\net8.0\VideoDownloader.Model.deps.json
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\bin\Debug\net8.0\VideoDownloader.Model.dll
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\bin\Debug\net8.0\VideoDownloader.Model.pdb
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.csproj.AssemblyReference.cache
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.dll
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\refint\VideoDownloader.Model.dll
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\VideoDownloader.Model.pdb
+C:\Users\Aryan\Documents\github\VideoDownloader\VideoDownloaderModule\VideoDownloader.Model\obj\Debug\net8.0\ref\VideoDownloader.Model.dll
