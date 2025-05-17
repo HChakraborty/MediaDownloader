@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore YoutubeDownloaderModule/YoutubeDownloader.sln
+      run: dotnet restore VideoDownloaderModule/VideoDownloader.sln
     - name: Build
-      run: dotnet build YoutubeDownloaderModule/YoutubeDownloader.sln --no-restore
+      run: dotnet build VideoDownloaderModule/VideoDownloader.sln --no-restore
     - name: Test
-      run: dotnet test YoutubeDownloaderModule/YoutubeDownloader.sln --no-build --verbosity normal
+      run: dotnet test VideoDownloaderModule/VideoDownloader.sln --no-build --verbosity normal

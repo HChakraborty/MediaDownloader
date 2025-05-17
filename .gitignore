@@ -2,6 +2,6 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/YoutubeDownloaderModule/YoutubeDownloader.Service/executables/ffmpeg.exe
-/YoutubeDownloaderModule/YoutubeDownloader.Service/executables/yt-dlp.exe
+/VideoDownloaderModule/VideoDownloader.Service/executables/ffmpeg.exe
+/VideoDownloaderModule/VideoDownloader.Service/executables/yt-dlp.exe
 /.vs
