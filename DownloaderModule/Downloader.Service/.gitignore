@@ -364,3 +364,6 @@ FodyWeavers.xsd
 
 /executables/ffmpeg.exe
 /executables/yt-dlp.exe
+
+/bin
+/obj
