@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using System.IO.Compression;
 using YoutubeDLSharp;
 using YoutubeDLSharp.Metadata;
+using YoutubeDLSharp.Options;
 
 namespace YoutubeDownloader.Controllers
 {
@@ -24,13 +27,21 @@ namespace YoutubeDownloader.Controllers
         {
             try
             {
-                RunResult<string> videoFile = await ytdl.RunVideoDownload(Uri.UnescapeDataString(videoUrl));
+                var options = new OptionSet()
+                {
+                    RestrictFilenames = true
+                };
+                RunResult<string> videoFile = await ytdl.RunVideoDownload(Uri.UnescapeDataString(videoUrl), overrideOptions: options);
 
-                if(videoFile.ErrorOutput.Length > 0)
+                if(videoFile.ErrorOutput.Any(error => error.Contains("error", StringComparison.OrdinalIgnoreCase)))
                 {
                     throw new UriFormatException(string.Join(", ", videoFile.ErrorOutput));
                 }
-                return Ok($"Downloaded `{Path.GetFileName(videoFile.Data)}` at `{ytdl.OutputFolder}`");
+
+                var fileName = Path.GetFileName(videoFile.Data);
+                var fileBytes = System.IO.File.ReadAllBytes(videoFile.Data);
+                System.IO.File.Delete(videoFile.Data);
+                return Ok(File(fileBytes, "application/octet-stream", fileName));
             }
             catch (Exception ex) { 
                 return BadRequest( new
@@ -47,17 +58,41 @@ namespace YoutubeDownloader.Controllers
         {
             try
             {
+                List<string> downloadFilePaths = new List<string>();
+                var options = new OptionSet()
+                {
+                    RestrictFilenames = true
+                };
                 IEnumerable<Task> downloadTask = videoUrls.Select(async videoUrl =>
                 {
-                    RunResult<string> res = await ytdl.RunVideoDownload(Uri.UnescapeDataString(videoUrl));
-                    if (res.ErrorOutput.Length > 0)
+                    RunResult<string> videoFile = await ytdl.RunVideoDownload(Uri.UnescapeDataString(videoUrl), overrideOptions: options);
+                    if (videoFile.ErrorOutput.Length > 0)
                     {
-                        throw new UriFormatException(string.Join(", ", res.ErrorOutput));
+                        throw new UriFormatException(string.Join(", ", videoFile.ErrorOutput));
                     }
+                    downloadFilePaths.Add(videoFile.Data);
                 });
                 await Task.WhenAll(downloadTask);
+                string zipFileName = "Videos" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".zip";
+                string zipPath = Path.Combine(ytdl.OutputFolder, zipFileName);
+                using (var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+                {
+                    foreach (var filePath in downloadFilePaths)
+                    {
+                        zip.CreateEntryFromFile(filePath, Path.GetFileName(filePath));
+                    }
+                }
 
-                return Ok($"Downloaded at `{ytdl.OutputFolder}`");
+                var zipBytes = System.IO.File.ReadAllBytes(zipPath);
+
+                foreach (var filePath in downloadFilePaths)
+                {
+                    System.IO.File.Delete(filePath);
+                }
+
+                System.IO.File.Delete(zipPath);
+
+                return Ok(File(zipBytes, "application/zip", zipFileName));
             }
             catch (Exception ex)
             {
