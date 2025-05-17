@@ -9,10 +9,10 @@ namespace YoutubeDownloader.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class YoutubeDownloadController: ControllerBase
+    public class VideoDownloadController: ControllerBase
     {
         private readonly YoutubeDL ytdl;
-        public YoutubeDownloadController()
+        public VideoDownloadController()
         {
             ytdl = new YoutubeDL();
             string baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\.."));
