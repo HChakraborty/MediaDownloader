@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore VideoDownloaderModule/VideoDownloader.sln
+      run: dotnet restore DownloaderModule/Downloader.sln
     - name: Build
-      run: dotnet build VideoDownloaderModule/VideoDownloader.sln --no-restore
+      run: dotnet build DownloaderModule/Downloader.sln --no-restore
     - name: Test
-      run: dotnet test VideoDownloaderModule/VideoDownloader.sln --no-build --verbosity normal
+      run: dotnet test DownloaderModule/Downloader.sln --no-build --verbosity normal
