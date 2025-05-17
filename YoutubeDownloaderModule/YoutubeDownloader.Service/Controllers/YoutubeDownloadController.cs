@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using System.IO.Compression;
 using YoutubeDLSharp;
 using YoutubeDLSharp.Metadata;
@@ -13,7 +12,8 @@ namespace YoutubeDownloader.Controllers
     public class YoutubeDownloadController: ControllerBase
     {
         private readonly YoutubeDL ytdl;
-        public YoutubeDownloadController() {
+        public YoutubeDownloadController()
+        {
             ytdl = new YoutubeDL();
             string baseDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, @"..\..\.."));
 
@@ -51,8 +51,9 @@ namespace YoutubeDownloader.Controllers
                 ytdl.OutputFolder = defaultYoutubePath;
                 return File(fileBytes, "application/octet-stream", fileName);
             }
-            catch (Exception ex) { 
-                return BadRequest( new
+            catch (Exception ex)
+            {
+                return BadRequest(new
                 {
                     error = ex.Message,
                     stackTrace = ex.StackTrace
@@ -125,7 +126,7 @@ namespace YoutubeDownloader.Controllers
                     throw new UriFormatException(string.Join(", ", videoDetails.ErrorOutput));
                 }
                 return Ok(videoDetails.Data);
-            } 
+            }
             catch (Exception ex)
             {
                 return BadRequest(new
