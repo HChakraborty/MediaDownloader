@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.IO.Compression;
 using YoutubeDLSharp;
 using YoutubeDLSharp.Metadata;
