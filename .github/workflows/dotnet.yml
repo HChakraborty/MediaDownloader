@@ -16,13 +16,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Check if .NET files changed
+    - name: Check if .NET files or workflow file (dotnet.yml) changed
       id: check_changes
       shell: bash
       run: |
         git fetch origin main --depth=1
         CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
-        if echo "$CHANGED_FILES" | grep -E '^DownloaderModule/.*\.(csproj|sln|props|config)$'; then
+        echo "$CHANGED_FILES"
+
+        if echo "$CHANGED_FILES" | grep -E '^(DownloaderModule/.*\.(csproj|sln|props|config)|\.github/workflows/dotnet\.ya?ml)$'; then
           echo "run=true" >> $GITHUB_OUTPUT
         else
           echo "run=false" >> $GITHUB_OUTPUT
@@ -46,6 +48,6 @@ jobs:
       if: steps.check_changes.outputs.run == 'true'
       run: dotnet test DownloaderModule/Downloader.sln --no-build --verbosity normal
 
-    - name: Skip .NET workflow (no changes detected)
+    - name: Skip .NET workflow (no relevant changes detected)
       if: steps.check_changes.outputs.run == 'false'
-      run: echo "No changes in DownloaderModule. Skipping .NET build."
+      run: echo "No changes in DownloaderModule or dotnet.yml. Skipping .NET build."

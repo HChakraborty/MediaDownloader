@@ -17,13 +17,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check if .NET files changed
+      - name: Check if .NET files or workflow file (format-check.yml) changed
         id: check_changes
         shell: bash
         run: |
           git fetch origin main --depth=1
           CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
-          if echo "$CHANGED_FILES" | grep -E '^DownloaderModule/.*\.(csproj|sln|props|config)$'; then
+          echo "$CHANGED_FILES"
+
+          if echo "$CHANGED_FILES" | grep -E '^(DownloaderModule/.*\.(csproj|sln|props|config|cs)$|\.github/workflows/format-check\.ya?ml)$'; then
             echo "run=true" >> $GITHUB_OUTPUT
           else
             echo "run=false" >> $GITHUB_OUTPUT
@@ -45,6 +47,6 @@ jobs:
         run: dotnet tool run csharpier check .
         working-directory: DownloaderModule
 
-      - name: Skip CSharpier check (no changes)
+      - name: Skip CSharpier check (no relevant changes)
         if: steps.check_changes.outputs.run == 'false'
-        run: echo "No changes in DownloaderModule. Skipping format check."
+        run: echo "No changes in DownloaderModule or format-check.yml. Skipping format check."
