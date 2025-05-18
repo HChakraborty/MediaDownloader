@@ -6,27 +6,41 @@ name: .NET
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'DownloaderModule/**'
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'DownloaderModule/**'
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Check if .NET files changed
+      id: check_changes
+      run: |
+        git fetch origin main --depth=1
+        CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
+        echo "$CHANGED_FILES" | grep '^DownloaderModule/' && echo "run=true" >> $GITHUB_OUTPUT || echo "run=false" >> $GITHUB_OUTPUT
+
     - name: Setup .NET
+      if: steps.check_changes.outputs.run == 'true'
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+
     - name: Restore dependencies
+      if: steps.check_changes.outputs.run == 'true'
       run: dotnet restore DownloaderModule/Downloader.sln
+
     - name: Build
+      if: steps.check_changes.outputs.run == 'true'
       run: dotnet build DownloaderModule/Downloader.sln --no-restore
+
     - name: Test
+      if: steps.check_changes.outputs.run == 'true'
       run: dotnet test DownloaderModule/Downloader.sln --no-build --verbosity normal
+
+    - name: Skip .NET workflow (no changes detected)
+      if: steps.check_changes.outputs.run == 'false'
+      run: echo "No changes in DownloaderModule. Skipping .NET build."
