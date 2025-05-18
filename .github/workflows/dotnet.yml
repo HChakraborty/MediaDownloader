@@ -11,13 +11,10 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v4
-<<<<<<< Updated upstream
-=======
 
     - name: Check if .NET files or workflow file (dotnet.yml) changed
       id: check_changes
@@ -33,21 +30,24 @@ jobs:
           echo "run=false" >> $GITHUB_OUTPUT
         fi
 
->>>>>>> Stashed changes
     - name: Setup .NET
+      if: steps.check_changes.outputs.run == 'true'
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
+
     - name: Restore dependencies
+      if: steps.check_changes.outputs.run == 'true'
       run: dotnet restore DownloaderModule/Downloader.sln
+
     - name: Build
+      if: steps.check_changes.outputs.run == 'true'
       run: dotnet build DownloaderModule/Downloader.sln --no-restore
+
     - name: Test
+      if: steps.check_changes.outputs.run == 'true'
       run: dotnet test DownloaderModule/Downloader.sln --no-build --verbosity normal
-<<<<<<< Updated upstream
-=======
 
     - name: Skip .NET workflow (no relevant changes detected)
       if: steps.check_changes.outputs.run == 'false'
       run: echo "No changes in DownloaderModule or dotnet.yml. Skipping .NET build."
->>>>>>> Stashed changes

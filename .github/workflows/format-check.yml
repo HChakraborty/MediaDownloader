@@ -17,8 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-<<<<<<< Updated upstream
-=======
       - name: Check if .NET files or workflow file (format-check.yml) changed
         id: check_changes
         shell: bash
@@ -33,23 +31,22 @@ jobs:
             echo "run=false" >> $GITHUB_OUTPUT
           fi
 
->>>>>>> Stashed changes
       - name: Setup .NET
+        if: steps.check_changes.outputs.run == 'true'
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
 
       - name: Restore .NET tools
+        if: steps.check_changes.outputs.run == 'true'
         run: dotnet tool restore
         working-directory: DownloaderModule
 
       - name: Check formatting using CSharpier
+        if: steps.check_changes.outputs.run == 'true'
         run: dotnet tool run csharpier check .
         working-directory: DownloaderModule
-<<<<<<< Updated upstream
-=======
 
       - name: Skip CSharpier check (no relevant changes)
         if: steps.check_changes.outputs.run == 'false'
         run: echo "No changes in DownloaderModule or format-check.yml. Skipping format check."
->>>>>>> Stashed changes
