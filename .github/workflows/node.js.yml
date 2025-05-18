@@ -21,10 +21,15 @@ jobs:
 
     - name: Check if Angular files changed
       id: check_changes
+      shell: bash
       run: |
         git fetch origin main --depth=1
         CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
-        echo "$CHANGED_FILES" | grep '^DownloaderModule-Web/' && echo "run=true" >> $GITHUB_OUTPUT || echo "run=false" >> $GITHUB_OUTPUT
+        if echo "$CHANGED_FILES" | grep '^DownloaderModule-Web/'; then
+          echo "run=true" >> $GITHUB_OUTPUT
+        else
+          echo "run=false" >> $GITHUB_OUTPUT
+        fi
 
     - name: Use Node.js ${{ matrix.node-version }}
       if: steps.check_changes.outputs.run == 'true'
