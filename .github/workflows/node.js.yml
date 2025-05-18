@@ -26,9 +26,12 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: DownloaderModule-Web
 
     - name: Run Angular build
       run: npm run build --if-present
+      working-directory: DownloaderModule-Web
 
     - name: Run Angular tests
       run: npm run test -- --watch=false --browsers=ChromeHeadless
+      working-directory: DownloaderModule-Web
