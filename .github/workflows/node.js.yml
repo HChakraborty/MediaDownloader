@@ -1,3 +1,5 @@
+# This workflow will build a Angular project
+
 name: Angular CI
 
 on:
@@ -8,7 +10,6 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     strategy:
@@ -18,7 +19,20 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Check if Angular files changed
+      id: check_changes
+      shell: bash
+      run: |
+        git fetch origin main --depth=1
+        CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
+        if echo "$CHANGED_FILES" | grep '^DownloaderModule-Web/'; then
+          echo "run=true" >> $GITHUB_OUTPUT
+        else
+          echo "run=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Use Node.js ${{ matrix.node-version }}
+      if: steps.check_changes.outputs.run == 'true'
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
@@ -26,13 +40,20 @@ jobs:
         cache-dependency-path: DownloaderModule-Web/package-lock.json
 
     - name: Install dependencies
+      if: steps.check_changes.outputs.run == 'true'
       run: npm install
       working-directory: DownloaderModule-Web
 
     - name: Run Angular build
+      if: steps.check_changes.outputs.run == 'true'
       run: npm run build --if-present
       working-directory: DownloaderModule-Web
 
     - name: Run Angular tests
+      if: steps.check_changes.outputs.run == 'true'
       run: npm run test -- --watch=false --browsers=ChromeHeadless
       working-directory: DownloaderModule-Web
+
+    - name: Skip Angular workflow (no changes detected)
+      if: steps.check_changes.outputs.run == 'false'
+      run: echo "No changes in DownloaderModule-Web. Skipping Angular build/test."
