@@ -22,7 +22,7 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Restore local tools
+      - name: Restore .NET tools
         run: dotnet tool restore
 
       - name: Check formatting using CSharpier
