@@ -6,8 +6,12 @@ name: .NET
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'DownloaderModule/**'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'DownloaderModule/**'
 
 jobs:
   build:
