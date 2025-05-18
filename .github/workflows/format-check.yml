@@ -27,3 +27,4 @@ jobs:
 
       - name: Check formatting using CSharpier
         run: dotnet tool run csharpier check .
+	working-directory: DownloaderModule
