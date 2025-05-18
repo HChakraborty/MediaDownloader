@@ -1,3 +1,5 @@
+using Downloader.Business;
+using Downloader.Business.Interfaces;
 using Downloader.Model.Model;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +11,8 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddJsonFile("appsettings.local.json");
 }
 
-builder.Services.Configure<BaseAppSettings>(builder.Configuration.GetSection("ConnectionStrings"));
+builder.Services.Configure<BaseAppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.AddScoped<IVideoDownloader, VideoDownloader>();
 
 // Add services to the container.
 

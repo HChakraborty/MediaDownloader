@@ -1,8 +1,7 @@
+using Downloader.Business.Interfaces;
+using Downloader.Model.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Downloader.Business;
-using Downloader.Service.Model;
-using Downloader.Model.Model;
 
 namespace YoutubeDownloader.Controllers
 {
@@ -12,10 +11,12 @@ namespace YoutubeDownloader.Controllers
     {
         private readonly IOptions<BaseAppSettings> _appSettings;
         private readonly IWebHostEnvironment _env;
-        public VideoDownloadController(IOptions<BaseAppSettings> appsettinngs, IWebHostEnvironment env)
+        private readonly IVideoDownloader _videoDownloader;
+        public VideoDownloadController(IOptions<BaseAppSettings> appsettinngs, IWebHostEnvironment env, IVideoDownloader videoDownloader)
         {
             _appSettings = appsettinngs;
             _env = env;
+            _videoDownloader = videoDownloader;
         }
 
         [HttpGet]
@@ -24,8 +25,7 @@ namespace YoutubeDownloader.Controllers
         {
             try
             {
-                var videoDownloader = new VideoDownloader(_appSettings, _env);
-                var videoFile = await videoDownloader.VideoDownload(videoUrl);
+                var videoFile = await _videoDownloader.VideoDownload(videoUrl);
                 return File(videoFile.FileBytes, "application/octet-stream", videoFile.FileName);
             }
             catch (Exception ex)
@@ -44,8 +44,7 @@ namespace YoutubeDownloader.Controllers
         {
             try
             {
-                var videoDownloader = new VideoDownloader(_appSettings, _env);
-                var videoFile = await videoDownloader.VideosDownload(videoUrls);
+                var videoFile = await _videoDownloader.VideosDownload(videoUrls);
                 return File(videoFile.FileBytes, "application/octet-stream", videoFile.FileName);
             }
             catch (Exception ex)
@@ -64,8 +63,7 @@ namespace YoutubeDownloader.Controllers
         {
             try
             {
-                var videoDownloader = new VideoDownloader(_appSettings, _env);
-                var videoData = await videoDownloader.VideoDetails(videoUrl);
+                var videoData = await _videoDownloader.VideoDetails(videoUrl);
                 return Ok(videoData);
             }
             catch (Exception ex)

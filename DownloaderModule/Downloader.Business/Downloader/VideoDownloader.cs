@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Downloader.Business.Interfaces;
+using Downloader.Model.exceptions;
+using Downloader.Model.Model;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
 using System.Collections.Concurrent;
 using System.IO.Compression;
-using Downloader.Model.Model;
 using YoutubeDLSharp;
 using YoutubeDLSharp.Metadata;
 using YoutubeDLSharp.Options;
-using Downloader.Model.exceptions;
 
 
 namespace Downloader.Business
 {
-    public class VideoDownloader
+    public class VideoDownloader: IVideoDownloader
     {
         private readonly YoutubeDL _ytdl;
         private readonly BaseAppSettings _appSettings;
@@ -85,6 +86,18 @@ namespace Downloader.Business
                 downloadFilePaths.Add(videoFile.Data);
             });
             await Task.WhenAll(downloadTask).ConfigureAwait(false);
+
+            var (zipBytes, zipFileName) = GenerateZipFile(downloadFilePaths);
+
+            return new VideoFile
+            {
+                FileBytes = zipBytes,
+                FileName = zipFileName,
+            };
+        }
+
+        private (byte[], string) GenerateZipFile(ConcurrentBag<string> downloadFilePaths)
+        {
             string zipFileName = "Videos" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".zip";
             string zipPath = Path.Combine(_ytdl.OutputFolder, zipFileName);
             using (var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
@@ -98,12 +111,7 @@ namespace Downloader.Business
             var zipBytes = System.IO.File.ReadAllBytes(zipPath);
 
             DeleteOutputFolder();
-
-            return new VideoFile
-            {
-                FileBytes = zipBytes,
-                FileName = zipFileName,
-            };
+            return ( zipBytes, zipFileName);
         }
 
         private async Task<VideoData> GetVideoDetails(string videoUrl)
