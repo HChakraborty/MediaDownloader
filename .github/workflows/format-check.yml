@@ -1,0 +1,31 @@
+# This workflow will Lint check a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: CSharpier Format Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-format:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore .NET tools
+        run: dotnet tool restore
+        working-directory: DownloaderModule
+
+      - name: Check formatting using CSharpier
+        run: dotnet tool run csharpier check .
+        working-directory: DownloaderModule
