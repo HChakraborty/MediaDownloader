@@ -7,12 +7,17 @@ namespace YoutubeDownloader.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VideoDownloadController: ControllerBase
+    public class VideoDownloadController : ControllerBase
     {
         private readonly IOptions<BaseAppSettings> _appSettings;
         private readonly IWebHostEnvironment _env;
         private readonly IVideoDownloader _videoDownloader;
-        public VideoDownloadController(IOptions<BaseAppSettings> appsettinngs, IWebHostEnvironment env, IVideoDownloader videoDownloader)
+
+        public VideoDownloadController(
+            IOptions<BaseAppSettings> appsettinngs,
+            IWebHostEnvironment env,
+            IVideoDownloader videoDownloader
+        )
         {
             _appSettings = appsettinngs;
             _env = env;
@@ -30,11 +35,7 @@ namespace YoutubeDownloader.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    error = ex.Message,
-                    stackTrace = ex.StackTrace
-                });
+                return BadRequest(new { error = ex.Message, stackTrace = ex.StackTrace });
             }
         }
 
@@ -49,11 +50,7 @@ namespace YoutubeDownloader.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    error = ex.Message,
-                    stackTrace = ex.StackTrace
-                });
+                return BadRequest(new { error = ex.Message, stackTrace = ex.StackTrace });
             }
         }
 
@@ -68,11 +65,7 @@ namespace YoutubeDownloader.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new
-                {
-                    error = ex.Message,
-                    stackTrace = ex.StackTrace
-                });
+                return BadRequest(new { error = ex.Message, stackTrace = ex.StackTrace });
             }
         }
     }
