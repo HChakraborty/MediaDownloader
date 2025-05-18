@@ -4,8 +4,6 @@
     public sealed class VideoDownloaderTests
     {
         [TestMethod]
-        public void VideoDownloaderReturnsFile()
-        {
-        }
+        public void VideoDownloaderReturnsFile() { }
     }
 }

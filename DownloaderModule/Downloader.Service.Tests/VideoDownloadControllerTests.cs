@@ -4,8 +4,6 @@
     public sealed class VideoDownloadControllerTests
     {
         [TestMethod]
-        public void VideoDownloaderControllerReturnsOk()
-        {
-        }
+        public void VideoDownloaderControllerReturnsOk() { }
     }
 }
