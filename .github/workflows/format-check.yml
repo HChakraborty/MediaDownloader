@@ -24,6 +24,7 @@ jobs:
 
       - name: Restore .NET tools
         run: dotnet tool restore
+        working-directory: DownloaderModule
 
       - name: Check formatting using CSharpier
         run: dotnet tool run csharpier check .
