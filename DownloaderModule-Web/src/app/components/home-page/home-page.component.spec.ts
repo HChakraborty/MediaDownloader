@@ -8,7 +8,7 @@ describe('TodosComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HomePageComponent]
+      declarations: [HomePageComponent]
     })
     .compileComponents();
 
