@@ -1,0 +1,1 @@
+export const inquireToDo: string = "What would you like to do today?";
