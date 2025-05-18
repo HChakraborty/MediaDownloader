@@ -16,6 +16,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+<<<<<<< Updated upstream
+=======
+
+    - name: Check if .NET files or workflow file (dotnet.yml) changed
+      id: check_changes
+      shell: bash
+      run: |
+        git fetch origin main --depth=1
+        CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
+        echo "$CHANGED_FILES"
+
+        if echo "$CHANGED_FILES" | grep -E '^(DownloaderModule/.*\.(csproj|sln|props|config)|\.github/workflows/dotnet\.ya?ml)$'; then
+          echo "run=true" >> $GITHUB_OUTPUT
+        else
+          echo "run=false" >> $GITHUB_OUTPUT
+        fi
+
+>>>>>>> Stashed changes
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
@@ -26,3 +44,10 @@ jobs:
       run: dotnet build DownloaderModule/Downloader.sln --no-restore
     - name: Test
       run: dotnet test DownloaderModule/Downloader.sln --no-build --verbosity normal
+<<<<<<< Updated upstream
+=======
+
+    - name: Skip .NET workflow (no relevant changes detected)
+      if: steps.check_changes.outputs.run == 'false'
+      run: echo "No changes in DownloaderModule or dotnet.yml. Skipping .NET build."
+>>>>>>> Stashed changes

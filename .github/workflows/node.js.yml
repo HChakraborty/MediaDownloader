@@ -16,8 +16,9 @@ jobs:
         node-version: [22.x]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
+<<<<<<< Updated upstream
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
@@ -36,3 +37,45 @@ jobs:
     - name: Run Angular tests
       run: npm run test -- --watch=false --browsers=ChromeHeadless
       working-directory: DownloaderModule-Web
+=======
+      - name: Check if Angular files or workflow file (node.js.yml) changed
+        id: check_changes
+        shell: bash
+        run: |
+          git fetch origin main --depth=1
+          CHANGED_FILES=$(git diff --name-only origin/main ${{ github.sha }})
+          echo "$CHANGED_FILES"
+
+          if echo "$CHANGED_FILES" | grep -E '^(DownloaderModule-Web/|\.github/workflows/node\.js\.ya?ml)$'; then
+            echo "run=true" >> $GITHUB_OUTPUT
+          else
+            echo "run=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        if: steps.check_changes.outputs.run == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: DownloaderModule-Web/package-lock.json
+
+      - name: Install dependencies
+        if: steps.check_changes.outputs.run == 'true'
+        run: npm install
+        working-directory: DownloaderModule-Web
+
+      - name: Run Angular build
+        if: steps.check_changes.outputs.run == 'true'
+        run: npm run build --if-present
+        working-directory: DownloaderModule-Web
+
+      - name: Run Angular tests
+        if: steps.check_changes.outputs.run == 'true'
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
+        working-directory: DownloaderModule-Web
+
+      - name: Skip Angular workflow (no relevant changes)
+        if: steps.check_changes.outputs.run == 'false'
+        run: echo "No changes in DownloaderModule-Web or node.js.yml. Skipping Angular build/test."
+>>>>>>> Stashed changes
