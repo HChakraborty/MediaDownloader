@@ -22,6 +22,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//needs to be removed . temp added for cors policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowAngularDev",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:4200") // Angular dev server
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithExposedHeaders("Content-Disposition");
+            ;
+        }
+    );
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -35,6 +52,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+//needs to be removed . temp added for cors policy
+app.UseCors("AllowAngularDev"); // Apply CORS policy here
 app.MapControllers();
 
 app.Run();
