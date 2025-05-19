@@ -25,15 +25,19 @@ builder.Services.AddSwaggerGen();
 //needs to be removed . temp added for cors policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngularDev", policy =>
-    {
-        policy.WithOrigins("http://localhost:4200") // Angular dev server
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .WithExposedHeaders("Content-Disposition"); ;
-    });
+    options.AddPolicy(
+        "AllowAngularDev",
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:4200") // Angular dev server
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .WithExposedHeaders("Content-Disposition");
+            ;
+        }
+    );
 });
-
 
 var app = builder.Build();
 
@@ -47,6 +51,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
 //needs to be removed . temp added for cors policy
 app.UseCors("AllowAngularDev"); // Apply CORS policy here
 app.MapControllers();
