@@ -1,0 +1,12 @@
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: -10px; /* Adjust based on gutter */
+}
+
+.grid-sizer,
+.grid-item {
+  width: 33.333%; /* Three columns */
+  padding-left: 10px; /* Adjust based on gutter */
+  margin-bottom: 10px; /* Adjust based on gutter */
+}
