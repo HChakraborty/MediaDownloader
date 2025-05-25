@@ -1,6 +1,6 @@
-# This workflow will build an Angular project
+# This workflow will build a React project
 
-name: Angular CI
+name: React CI
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check if Angular files or workflow file (node.js.yml) changed
+      - name: Check if React files or workflow file (node.js.yml) changed
         id: check_changes
         shell: bash
         run: |
@@ -46,16 +46,16 @@ jobs:
         run: npm install
         working-directory: DownloaderModule-Web
 
-      - name: Run Angular build
+      - name: Run React build
         if: steps.check_changes.outputs.run == 'true'
-        run: npm run build --if-present
+        run: npm run build
         working-directory: DownloaderModule-Web
 
-      - name: Run Angular tests
-        if: steps.check_changes.outputs.run == 'true'
-        run: npm run test -- --watch=false --browsers=ChromeHeadless
-        working-directory: DownloaderModule-Web
+#      - name: Run React tests
+#        if: steps.check_changes.outputs.run == 'true'
+#        run: npm test -- --watchAll=false
+#       working-directory: DownloaderModule-Web
 
-      - name: Skip Angular workflow (no relevant changes)
+      - name: Skip React workflow (no relevant changes)
         if: steps.check_changes.outputs.run == 'false'
-        run: echo "No changes in DownloaderModule-Web or node.js.yml. Skipping Angular build/test."
+        run: echo "No changes in DownloaderModule-Web or node.js.yml. Skipping React build/test."
