@@ -6,7 +6,7 @@ const HomePage = () => {
   return(
     <>
       <SearchSection />
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center" style={{marginTop: 40, marginBottom: 20}}>
           <DisplayCards />
       </div>
     </>
